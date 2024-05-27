@@ -2,6 +2,7 @@
 
 import speech_recognition as sr
 import pyttsx3
+from libc_fct import libc_functions
 
 # Initialisation du moteur de synthèse vocale
 engine = pyttsx3.init()
