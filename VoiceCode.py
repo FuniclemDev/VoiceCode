@@ -18,34 +18,40 @@ def listen():
         try:
             command = recognizer.recognize_google(audio, language='fr-FR')
             print(f"Vous avez dit: {command}")
-            return command.lower()
+            return command.lower().split()  # Séparer la phrase en mots
         except sr.UnknownValueError:
             print("Je n'ai pas compris ce que vous avez dit")
-            return ""
+            return []
         except sr.RequestError:
             print("Erreur de service")
-            return ""
+            return []
 
 def generate_c_code(commands):
     c_code = ""
     for command in commands:
-        if "déclarer une variable entière" in command:
+        if "déclarer" in command:
             c_code += "int variable;\n"
-        elif "afficher un message" in command:
+        elif "afficher" in command:
             c_code += 'printf("Message");\n'
+        elif "coucou" in command:
+            c_code += 'if (/* condition */) {\n    // next instruction\n}\n'
         # Ajouter d'autres commandes ici
     return c_code
 
 if __name__ == "__main__":
     speak("OK")
-    commands = []
+    all_commands = []
     while True:
-        command = listen()
-        if command == "stop" or command == "stoppe":
+        words = listen()
+        if not words:
+            continue  # Ignorer les phrases vides
+        all_commands.extend(words)  # Ajouter les mots à la liste complète des commandes
+        if "stop" in words:
             break
-        commands.append(command)
-
-    c_code = generate_c_code(commands)
+    print(all_commands)
+    c_code = generate_c_code(all_commands)
+    print("--------")
+    print(c_code)
     with open("generated_code.c", "w") as file:
         file.write("#include <stdio.h>\n\nint main() {\n")
         file.write(c_code)
