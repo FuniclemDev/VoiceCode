@@ -37,11 +37,11 @@ def generate_c_code(commands):
     return c_code
 
 if __name__ == "__main__":
-    speak("Dites vos commandes de code")
+    speak("OK")
     commands = []
     while True:
         command = listen()
-        if command == "stop":
+        if command == "stop" or command == "stoppe":
             break
         commands.append(command)
 
@@ -51,4 +51,4 @@ if __name__ == "__main__":
         file.write(c_code)
         file.write("    return 0;\n}\n")
     print("Code C généré avec succès")
-    speak("Le code C a été généré avec succès")
+    speak("OK")
