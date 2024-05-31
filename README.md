@@ -68,4 +68,5 @@ Les commandes if et while font un décalage de tabulation. Pour annuler ce déca
 
 ## Remarques
 
-Il est possible que le programme ne détecte aucune entrée audio de votre microphone. C'est pour cela que vous avez à votre disposition ./debug.sh, cela peut résoudre le problème mais certaine fonctionnalités de votre pc peuvent disparaître jusqu'au prochain redémarrage. Je décline toute responsabilité en cas de dommage sur un pc exécutant les programmes présents dans le projet.
+Il est possible que le programme ne détecte aucune entrée audio de votre microphone. Si vous rencontrez ce problème, vous pouvez utiliser le script `./debug.sh` pour tenter de le résoudre. Cependant, veuillez noter que certaines fonctionnalités de votre PC peuvent être affectées jusqu'au prochain redémarrage. Je décline toute responsabilité en cas de dommage sur un PC exécutant les programmes présents dans ce projet.
+
