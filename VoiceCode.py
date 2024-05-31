@@ -3,6 +3,8 @@
 import pygame
 import speech_recognition as sr
 from libc_fct import libc_functions  # Assurez-vous que libc_fct.py contient une liste de fonctions libc
+from lib_functions import lib_functions_types  # Assurez-vous que libc_fct.py contient une liste de fonctions libc
+import time
 
 # Initialisation de Pygame
 pygame.init()
@@ -41,15 +43,34 @@ def listen():
 
 def generate_c_code(commands):
     c_code = ""
-    for command in commands:
-        if "déclarer" in command:
-            c_code += "int variable;\n"
-        elif "afficher" in command:
-            c_code += 'printf("Message");\n'
-        elif "coucou" in command:
-            c_code += 'if (/* condition */) {\n    // next instruction\n}\n'
-        elif command in libc_functions:
-            c_code += f'{command}(/* arguments */);\n'
+    for i in range(len(commands)):
+        if "déclarer" in commands[i]:
+            try:
+                if commands[i + 1] in lib_functions_types and commands[i + 2]:
+                    c_code += f'    {commands[i + 1]} {commands[i + 2]}'
+            except:
+                print('Déclaration incomplète ou non valide')
+            i += 3
+        if (i >= len(commands)):
+            break
+        elif commands[i] in libc_functions:
+            c_code += f'{commands[i]}\n'
+        elif commands[i] in lib_functions_types:
+            c_code += f'{commands[i]}\n'
+        elif "parenthèse" in commands[i] and commands[i + 1]:
+            if commands[i + 1] == "ouverte":
+                c_code += '('
+            if commands[i + 1] == "fermée":
+                c_code += ')'
+            i += 1
+        if (i >= len(commands)):
+            break
+        elif "espace" in commands[i]:
+            c_code += " "
+        if "égal" in commands[i]:
+            c_code += " = "
+        if "point" in commands[i]:
+            c_code += ";\n"
         # Ajouter d'autres commandes ici
     return c_code
 
@@ -58,6 +79,7 @@ if __name__ == "__main__":
     c_code = ""
     running = True
     while True and running:
+        draw_text("#include <stdio.h>\n#include <unistd.h>\n\nint main() {\n" + c_code + "    return 0;\n}\n")
         words = listen()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -69,7 +91,6 @@ if __name__ == "__main__":
             break
 
         c_code = generate_c_code(all_commands)
-        draw_text("#include <stdio.h>\n\nint main() {\n" + c_code + "    return 0;\n}\n")
 
     print(all_commands)
     with open("generated_code.c", "w") as file:
@@ -80,6 +101,7 @@ if __name__ == "__main__":
 
     # Garder la fenêtre Pygame ouverte après avoir terminé l'écoute
     while running:
+        time.sleep(0.4)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
