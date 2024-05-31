@@ -56,8 +56,12 @@ def generate_c_code(commands):
 if __name__ == "__main__":
     all_commands = []
     c_code = ""
-    while True:
+    running = True
+    while True and running:
         words = listen()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
         if not words:
             continue  # Ignorer les phrases vides
         all_commands.extend(words)  # Ajouter les mots à la liste complète des commandes
@@ -75,7 +79,6 @@ if __name__ == "__main__":
     print("Code C généré avec succès")
 
     # Garder la fenêtre Pygame ouverte après avoir terminé l'écoute
-    running = True
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
