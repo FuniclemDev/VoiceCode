@@ -20,19 +20,28 @@ last_command_text = ""  # Variable pour stocker la dernière commande reconnue
 all_commands = ["   "]
 paused = False  # Variable pour vérifier si la saisie est en pause
 paused_string = ""  # Chaîne de caractères tapés pendant la pause
+includes = []
 
-def draw_text(text, command_text):
+def draw_text(text: str, command_text):
+    global includes
+    include_text = ""
+    for str in includes:
+        include_text += str
+
     screen.fill(background_color)
     y = 10
 
-    # Afficher la commande reconnue en haut de la fenêtre
     command_surface = font.render(command_text, True, text_color)
     screen.blit(command_surface, (10, y))
-    y += 30  # Ajouter un espace après la commande
+    y += 30
 
     # Dessiner une ligne noire
     pygame.draw.line(screen, line_color, (10, y), (790, y), 2)
-    y += 10  # Ajouter un espace après la ligne
+    y += 10
+    for line in include_text.split('\n'):
+        text_surface = font.render(line, True, text_color)
+        screen.blit(text_surface, (10, y))
+        y += 30
     for line in text.split('\n'):
         text_surface = font.render(line, True, text_color)
         screen.blit(text_surface, (10, y))
@@ -137,6 +146,29 @@ def generate_c_code(commands):
         i += 1
     return c_code
 
+def add_includes():
+    global includes
+    global paused_string
+    global paused
+    include_name = ""
+    while True:
+        draw_text("#include <" + include_name + "_.h>", last_command_text)
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                key_name = pygame.key.name(event.key)
+                if key_name == 'escape':
+                    paused = False
+                    return
+                elif key_name == 'return':
+                    paused = False
+                    includes.append("#include <" + include_name + ".h>" + "\n")
+                    paused_string = ""
+                    return
+                elif key_name == 'backspace':
+                    include_name = include_name[:-1]
+                elif key_name.isprintable() and len(key_name) == 1:
+                    include_name += key_name
+
 if __name__ == "__main__":
     c_code = ""
     running = True
@@ -157,6 +189,9 @@ if __name__ == "__main__":
                         all_commands.append(paused_string)
                         c_code = generate_c_code(all_commands)
                         paused_string = ""
+                elif event.key == pygame.K_i:
+                    paused = True
+                    add_includes()
                 else:
                     key_name = pygame.key.name(event.key)
                     if key_name == 'space':
@@ -186,6 +221,8 @@ if __name__ == "__main__":
     draw_text("#include <stdio.h>\n#include <unistd.h>\n\nint main() {\n" + c_code + "return 0;\n}\n", last_command_text)
     print(all_commands)
     with open("generated_code.c", "w") as file:
+        for str in includes:
+            file.write(str)
         file.write("#include <stdio.h>\n#include <unistd.h>\n\nint main()\n{\n")
         file.write(c_code)
         file.write("return 0;\n}\n")
