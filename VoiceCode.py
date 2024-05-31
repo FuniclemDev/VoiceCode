@@ -5,6 +5,7 @@ import speech_recognition as sr
 import time
 
 tab = 1
+no_comm = False
 
 # Initialisation de Pygame
 pygame.init()
@@ -72,9 +73,24 @@ def generate_c_code(commands):
     c_code = ""
     global tab
     global last_command_text
+    global no_comm
     i = 0
     while i < len(commands):
-        if "parenthèse" in commands[i] and commands[i + 1]:
+        if "Guy" in commands[i] and commands[i + 1]:
+            if "ouvert" in commands[i+1]:
+                c_code += '\"'
+                no_comm = True
+            if "fermé" in commands[i+1]:
+                c_code += '\"'
+                no_comm = False
+            i += 1
+            if (i >= len(commands)):
+                break
+        if no_comm:
+            c_code += f'{commands[i]}'
+            if i < len(commands) - 1:
+                c_code += " "
+        elif "parenthèse" in commands[i] and commands[i + 1]:
             if "ouvert" in commands[i+1]:
                 c_code += '('
             if "fermé" in commands[i+1]:
@@ -90,14 +106,6 @@ def generate_c_code(commands):
             c_code += "bool "
         elif "étoile" in commands[i]:
             c_code += "*"
-        elif "Guy" in commands[i] and commands[i + 1]:
-            if "ouvert" in commands[i+1]:
-                c_code += '\"'
-            if "fermé" in commands[i+1]:
-                c_code += '\"'
-            i += 1
-            if (i >= len(commands)):
-                break
         elif "espace" in commands[i]:
             c_code += " "
         elif ("égal" or "=") in commands[i]:

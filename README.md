@@ -58,7 +58,8 @@ git clone https://github.com/FuniclemDev/VoiceCode.git
 | ouvre                      | {\n                 |
 | ferme                      | }\n                 |
 
-Les commandes if et while font un décalage de tabulation. Pour annuler ce décalage, utilisez la commande "retour fermé"
+Les commandes `condition` et `boucle` font un décalage de tabulation. Pour annuler ce décalage, utilisez la commande "retour fermé"
+La commande `Guy ouvert` permet d'ouvrir les guillemets et de rajouter du texte sans avoir la possibilité de taper d'autres commandes. Dites `Guy fermé` pour arrêter.
 
 3. Utilisez les touches du clavier pour ajouter des caractères espacés.
 
