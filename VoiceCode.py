@@ -2,8 +2,6 @@
 
 import pygame
 import speech_recognition as sr
-from libc_fct import libc_functions  # Assurez-vous que libc_fct.py contient une liste de fonctions libc
-from lib_functions import lib_functions_types  # Assurez-vous que libc_fct.py contient une liste de fonctions libc
 import time
 
 tab = 1
@@ -19,6 +17,7 @@ screen.fill(background_color)
 pygame.display.flip()
 line_color = (0, 0, 0)
 last_command_text = ""  # Variable pour stocker la dernière commande reconnue
+all_commands = ["    "]
 
 def draw_text(text, command_text):
     screen.fill(background_color)
@@ -40,51 +39,46 @@ def draw_text(text, command_text):
 
 def listen():
     recognizer = sr.Recognizer()
+    global last_command_text
     with sr.Microphone() as source:
         print("Parlez maintenant...")
-        audio = recognizer.listen(source)
+        recognizer.adjust_for_ambient_noise(source, duration=0.5)  # Ajuster le bruit ambiant
         try:
+            audio = recognizer.listen(source, timeout=1, phrase_time_limit=5)
             command = recognizer.recognize_google(audio, language='fr-FR')
             print(f"Vous avez dit: {command}")
             return command.lower().split(), command  # Retourner la commande en mots et en texte
+        except sr.WaitTimeoutError:
+            print("Temps d'attente dépassé, aucune commande détectée")
+            last_command_text = "Vous pouvez dicter..."
+            return [], ""
         except sr.UnknownValueError:
             print("Je n'ai pas compris ce que vous avez dit")
+            last_command_text = "Je n'ai pas compris ce que vous avez dit"
             return [], ""
         except sr.RequestError:
             print("Erreur de service")
+            last_command_text = "/!\\ Erreur de service"
             return [], ""
 
 def generate_c_code(commands):
     c_code = ""
     global tab
-    for i in range(len(commands)):
-        if (i >= len(commands)):
-            break
-        if "déclarer" in commands[i]:
-            try:
-                if commands[i + 1] and commands[i + 2]:
-                    c_code += f'    {commands[i + 1]} {commands[i + 2]}'
-            except:
-                print('Déclaration incomplète ou non valide')
-            i += 3
-            if (i >= len(commands)):
-                break
-        elif commands[i] in libc_functions:
-            c_code += f'{commands[i]}'
-        elif commands[i] in lib_functions_types:
-            c_code += f'{commands[i]}'
-        elif "parenthèse" in commands[i] and commands[i + 1]:
-            if commands[i + 1] == "ouverte":
+    global last_command_text
+    i = 0
+    while i < len(commands):
+        if "parenthèse" in commands[i] and commands[i + 1]:
+            if "ouvert" in commands[i+1]:
                 c_code += '('
-            if commands[i + 1] == "fermée":
+            if "fermé" in commands[i+1]:
                 c_code += ')'
             i += 1
             if (i >= len(commands)):
                 break
         elif "Guy" in commands[i] and commands[i + 1]:
-            if commands[i + 1] == "ouvert":
+            if "ouvert" in commands[i+1]:
                 c_code += '\"'
-            if commands[i + 1] == "fermé":
+            if "fermé" in commands[i+1]:
                 c_code += '\"'
             i += 1
             if (i >= len(commands)):
@@ -92,62 +86,65 @@ def generate_c_code(commands):
         elif "espace" in commands[i]:
             c_code += " "
         elif "égal" in commands[i]:
-            if commands[i + 1] == "égal":
+            if i+1 < len(commands) and commands[i + 1] in "égal":
                 c_code += " == "
                 i += 1
             else:
                 c_code += " = "
         elif "supérieur" in commands[i]:
-            if commands[i + 1] == "égal":
+            if i+1 < len(commands) and commands[i + 1] in "égal":
                 c_code += " >= "
                 i += 1
             else:
                 c_code += " > "
         elif "inférieur" in commands[i]:
-            if commands[i + 1] == "égal":
+            if  i+1 < len(commands) and commands[i + 1] in "égal":
                 c_code += " <= "
                 i += 1
             else:
                 c_code += " < "
-        elif "différent" == commands[i]:
+        elif "différent" in commands[i]:
             c_code += " != "
-        elif "point" in commands[i]:
+        elif ("retour" or "point") in commands[i]:
             c_code += ";\n"
-            if tab > 0 and commands[i + 1] == "ferme":
+            if tab > 0 and i+1 < len(commands) and "fermé" in commands[i + 1]:
                 c_code += (" " * (tab - 1) * 4)
-                i += 1
+                i -= 1
             else:
                 c_code += (" " * tab * 4)
             if (i >= len(commands)):
                 break
-        elif "si" == commands[i]:
+        elif "condition" in commands[i]:
             c_code += "if ("
-        elif "ouvre" == commands[i]:
+        elif "ouvre" in commands[i]:
             c_code += " {\n"
             tab += 1
-        elif "ferme" == commands[i]:
+            c_code += (" " * tab * 4)
+        elif "ferme" in commands[i]:
             c_code += "}\n" + (" " * tab * 4)
-        elif "efface" == commands[i]:
-            while len(c_code) > 0 and c_code[-1] != "\n":
-                c_code = c_code[:-1]
         else:
             c_code += f' {commands[i]} '
+        i += 1
     return c_code
 
 if __name__ == "__main__":
-    all_commands = []
     c_code = ""
     running = True
     while True and running:
+        no = 0
         draw_text("#include <stdio.h>\n#include <unistd.h>\n\nint main() {\n" + c_code + "    return 0;\n}\n", last_command_text)
         words, last_command_text = listen()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
         if not words:
-            last_command_text = "Je n'ai pas compris, veillez répéter."
             continue  # Ignorer les phrases vides
-        all_commands.extend(words)  # Ajouter les mots à la liste complète des commandes
+        for i in words:
+            if (i == "efface"):
+                all_commands.pop(-1)
+                no = 1
+        if not no:
+            all_commands.extend(words)  # Ajouter les mots à la liste complète des commandes
         if "stop" in words or "stoppe" in words:
             break
 
