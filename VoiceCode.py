@@ -50,7 +50,6 @@ def draw_text(text: str, command_text):
 
 def listen():
     recognizer = sr.Recognizer()
-    global last_command_text
     with sr.Microphone() as source:
         print("Parlez maintenant...")
         recognizer.adjust_for_ambient_noise(source, duration=0.2)  # Ajuster le bruit ambiant
@@ -61,16 +60,13 @@ def listen():
             return command.lower().split(), command  # Retourner la commande en mots et en texte
         except sr.WaitTimeoutError:
             print("Temps d'attente dépassé, aucune commande détectée")
-            last_command_text = "Vous pouvez dicter..."
-            return [], ""
+            return [], "- Vous pouvez dicter..."
         except sr.UnknownValueError:
             print("Je n'ai pas compris ce que vous avez dit")
-            last_command_text = "Je n'ai pas compris ce que vous avez dit"
-            return [], ""
+            return [], "- Je n'ai pas compris ce que vous avez dit"
         except sr.RequestError:
             print("Erreur de service")
-            last_command_text = "/!\\ Erreur de service"
-            return [], ""
+            return [], "/!\\ Erreur de service"
 
 def generate_c_code(commands):
     c_code = ""
