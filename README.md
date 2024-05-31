@@ -58,7 +58,8 @@ git clone https://github.com/FuniclemDev/VoiceCode.git
 | ouvre                      | {\n                 |
 | ferme                      | }\n                 |
 
-Les commandes `condition` et `boucle` font un décalage de tabulation. Pour annuler ce décalage, utilisez la commande "retour fermé"
+Les commandes `condition` et `boucle` font un décalage de tabulation. Pour annuler ce décalage, utilisez la commande "retour fermé".
+
 La commande `Guy ouvert` permet d'ouvrir les guillemets et de rajouter du texte sans avoir la possibilité de taper d'autres commandes. Dites `Guy fermé` pour arrêter.
 
 3. Utilisez les touches du clavier pour ajouter des caractères espacés.
@@ -67,7 +68,7 @@ La commande `Guy ouvert` permet d'ouvrir les guillemets et de rajouter du texte 
 
 5. La touche `Retour arrière` enlève le dernier mot créé et la touche `Retour` effectue un retour à la ligne classique.
 
-6. Pour arrêter le programme, prononcez "stop".
+6. Pour arrêter le programme, prononcez "stop" ou fermer la fenêtre ou pressez `Echap`.
 
 ## Remarques
 
