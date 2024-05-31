@@ -64,9 +64,10 @@ Les commandes if et while font un décalage de tabulation. Pour annuler ce déca
 
 4. Appuyez sur la touche Tab, puis utilisez les touches du clavier pour écrire du texte manuellement. Appuyez de nouveau sur Tab pour ajouter et mettre à jour.
 
-5. Pour arrêter le programme, prononcez "stop".
+5. La touche `Retour arrière` enlève le dernier mot créé et la touche `Retour` effectue un retour à la ligne classique.
+
+6. Pour arrêter le programme, prononcez "stop".
 
 ## Remarques
 
 Il est possible que le programme ne détecte aucune entrée audio de votre microphone. Si vous rencontrez ce problème, vous pouvez utiliser le script `./debug.sh` pour tenter de le résoudre. Cependant, veuillez noter que certaines fonctionnalités de votre PC peuvent être affectées jusqu'au prochain redémarrage. Je décline toute responsabilité en cas de dommage sur un PC exécutant les programmes présents dans ce projet.
-
