@@ -4,7 +4,6 @@ import pygame
 import speech_recognition as sr
 import time
 
-tab = 1
 no_comm = False
 
 # Initialisation de Pygame
@@ -71,7 +70,7 @@ def listen():
 
 def generate_c_code(commands):
     c_code = ""
-    global tab
+    tab = 1
     global last_command_text
     global no_comm
     i = 0
@@ -90,7 +89,7 @@ def generate_c_code(commands):
             c_code += f'{commands[i]}'
             if i < len(commands) - 1:
                 c_code += " "
-        elif "parenthèse" in commands[i] and commands[i + 1]:
+        elif "parenthèse" in commands[i] and i+1 < len(commands):
             if "ouvert" in commands[i+1]:
                 c_code += '('
             if "fermé" in commands[i+1]:
@@ -109,19 +108,19 @@ def generate_c_code(commands):
         elif "espace" in commands[i]:
             c_code += " "
         elif ("égal" or "=") in commands[i]:
-            if i+1 < len(commands) and commands[i + 1] == ("égal" or "="):
+            if i+1 < len(commands) and ("égal" or "=") in commands[i + 1]:
                 c_code += "== "
                 i += 1
             else:
                 c_code += "= "
         elif "supérieur" in commands[i]:
-            if i+1 < len(commands) and commands[i + 1] == ("égal" or "="):
+            if i+1 < len(commands) and ("égal" or "=") in commands[i + 1]:
                 c_code += ">= "
                 i += 1
             else:
                 c_code += "> "
         elif "inférieur" in commands[i]:
-            if i+1 < len(commands) and commands[i + 1] == ("égal" or "="):
+            if i+1 < len(commands) and ("égal" or "=") in commands[i + 1]:
                 c_code += "<= "
                 i += 1
             else:
@@ -131,9 +130,9 @@ def generate_c_code(commands):
         elif "retour" in commands[i]:
             c_code += ";\n"
             if tab > 0 and i+1 < len(commands) and ("ferme" or "fermé") in commands[i + 1]:
-                c_code += (" " * (tab - 1) * 4)
-                i += 1
                 tab -= 1
+                c_code += (" " * (tab) * 4) + "}\n" + (" " * tab * 4)
+                i += 1
             else:
                 c_code += (" " * tab * 4)
             if (i >= len(commands)):
@@ -182,8 +181,9 @@ def add_includes():
 if __name__ == "__main__":
     c_code = ""
     running = True
+    last_command_text = "Chargement..."
     while True and running:
-        draw_text("\nint main() {\n" + c_code + "    return 0;\n}\n", last_command_text)
+        draw_text("\nint main()\n{\n" + c_code + "    return 0;\n}\n", last_command_text)
         if not paused:
             words, last_command_text = listen()
         for event in pygame.event.get():
@@ -228,7 +228,7 @@ if __name__ == "__main__":
             break
 
         c_code = generate_c_code(all_commands)
-    draw_text("\nint main() {\n" + c_code + "return 0;\n}\n", last_command_text)
+    draw_text("\nint main()\n{\n" + c_code + "return 0;\n}\n", last_command_text)
     print(all_commands)
     with open("generated_code.c", "w") as file:
         for str in includes:

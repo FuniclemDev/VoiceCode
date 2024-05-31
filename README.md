@@ -68,7 +68,7 @@ La commande `Guy ouvert` permet d'ouvrir les guillemets et de rajouter du texte 
 
 5. La touche `Retour arrière` enlève le dernier mot créé et la touche `Retour` effectue un retour à la ligne classique.
 
-6. Pour arrêter le programme, prononcez "stop" ou fermer la fenêtre ou pressez `Echap`.
+6. Pour arrêter le programme, prononcez "stop" ou fermez la fenêtre ou pressez `Echap`.
 
 ## Remarques
 
