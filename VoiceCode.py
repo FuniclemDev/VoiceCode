@@ -18,6 +18,8 @@ pygame.display.flip()
 line_color = (0, 0, 0)
 last_command_text = ""  # Variable pour stocker la dernière commande reconnue
 all_commands = ["    "]
+paused = False  # Variable pour vérifier si la saisie est en pause
+paused_string = ""  # Chaîne de caractères tapés pendant la pause
 
 def draw_text(text, command_text):
     screen.fill(background_color)
@@ -75,6 +77,12 @@ def generate_c_code(commands):
             i += 1
             if (i >= len(commands)):
                 break
+        elif "entier" in commands[i]:
+            c_code += "int "
+        elif "décimal" in commands[i]:
+            c_code += "float "
+        elif "booléen" in commands[i]:
+            c_code += "bool "
         elif "Guy" in commands[i] and commands[i + 1]:
             if "ouvert" in commands[i+1]:
                 c_code += '\"'
@@ -86,19 +94,19 @@ def generate_c_code(commands):
         elif "espace" in commands[i]:
             c_code += " "
         elif "égal" in commands[i]:
-            if i+1 < len(commands) and commands[i + 1] in "égal":
+            if i+1 < len(commands) and commands[i + 1] == "égal":
                 c_code += " == "
                 i += 1
             else:
                 c_code += " = "
         elif "supérieur" in commands[i]:
-            if i+1 < len(commands) and commands[i + 1] in "égal":
+            if i+1 < len(commands) and commands[i + 1] == "égal":
                 c_code += " >= "
                 i += 1
             else:
                 c_code += " > "
         elif "inférieur" in commands[i]:
-            if  i+1 < len(commands) and commands[i + 1] in "égal":
+            if i+1 < len(commands) and commands[i + 1] == "égal":
                 c_code += " <= "
                 i += 1
             else:
@@ -131,19 +139,42 @@ if __name__ == "__main__":
     c_code = ""
     running = True
     while True and running:
-        no = 0
         draw_text("#include <stdio.h>\n#include <unistd.h>\n\nint main() {\n" + c_code + "    return 0;\n}\n", last_command_text)
-        words, last_command_text = listen()
+        if not paused:
+            words, last_command_text = listen()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_BACKSPACE and len(all_commands) > 0:
+                    all_commands.pop(-1)
+                    c_code = generate_c_code(all_commands)
+                elif event.key == pygame.K_TAB:
+                    paused = not paused  # Toggle pause state
+                    if not paused:  # If resuming, add the paused string to commands
+                        all_commands.append(paused_string)
+                        c_code = generate_c_code(all_commands)
+                        paused_string = ""
+                else:
+                    key_name = pygame.key.name(event.key)
+                    if key_name == 'space':
+                        key_name = ' '
+                    if key_name == 'return':
+                        key_name = '\n'
+                    print(key_name, len(key_name))
+                    if (key_name.isprintable() and len(key_name) == 1) or key_name == '\n':
+                        if paused:
+                            paused_string += key_name
+                        else:
+                            all_commands.append(key_name)
+                            c_code = generate_c_code(all_commands)
         if not words:
             continue  # Ignorer les phrases vides
         for i in words:
-            if (i == "efface"):
+            if i == "efface" and len(all_commands) > 0:
                 all_commands.pop(-1)
-                no = 1
-        if not no:
+                break
+        else:
             all_commands.extend(words)  # Ajouter les mots à la liste complète des commandes
         if "stop" in words or "stoppe" in words:
             break
