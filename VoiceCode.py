@@ -53,7 +53,7 @@ def listen():
     global last_command_text
     with sr.Microphone() as source:
         print("Parlez maintenant...")
-        recognizer.adjust_for_ambient_noise(source, duration=0.5)  # Ajuster le bruit ambiant
+        recognizer.adjust_for_ambient_noise(source, duration=0.2)  # Ajuster le bruit ambiant
         try:
             audio = recognizer.listen(source, timeout=1, phrase_time_limit=5)
             command = recognizer.recognize_google(audio, language='fr-FR')
@@ -92,6 +92,8 @@ def generate_c_code(commands):
             c_code += "float "
         elif "booléen" in commands[i]:
             c_code += "bool "
+        elif "étoile" in commands[i]:
+            c_code += "*"
         elif "Guy" in commands[i] and commands[i + 1]:
             if "ouvert" in commands[i+1]:
                 c_code += '\"'
@@ -102,20 +104,20 @@ def generate_c_code(commands):
                 break
         elif "espace" in commands[i]:
             c_code += " "
-        elif "égal" in commands[i]:
-            if i+1 < len(commands) and commands[i + 1] == "égal":
+        elif ("égal" or "=") in commands[i]:
+            if i+1 < len(commands) and commands[i + 1] == ("égal" or "="):
                 c_code += "== "
                 i += 1
             else:
                 c_code += "= "
         elif "supérieur" in commands[i]:
-            if i+1 < len(commands) and commands[i + 1] == "égal":
+            if i+1 < len(commands) and commands[i + 1] == ("égal" or "="):
                 c_code += ">= "
                 i += 1
             else:
                 c_code += "> "
         elif "inférieur" in commands[i]:
-            if i+1 < len(commands) and commands[i + 1] == "égal":
+            if i+1 < len(commands) and commands[i + 1] == ("égal" or "="):
                 c_code += "<= "
                 i += 1
             else:
@@ -124,21 +126,25 @@ def generate_c_code(commands):
             c_code += "!= "
         elif "retour" in commands[i]:
             c_code += ";\n"
-            if tab > 0 and i+1 < len(commands) and "fermé" in commands[i + 1]:
+            if tab > 0 and i+1 < len(commands) and ("ferme" or "fermé") in commands[i + 1]:
                 c_code += (" " * (tab - 1) * 4)
-                i -= 1
+                i += 1
+                tab -= 1
             else:
                 c_code += (" " * tab * 4)
             if (i >= len(commands)):
                 break
         elif "condition" in commands[i]:
             c_code += "if ("
+        elif "boucle" in commands[i]:
+            c_code += "while ("
         elif "ouvre" in commands[i]:
             c_code += " {\n"
             tab += 1
             c_code += (" " * tab * 4)
-        elif "ferme" in commands[i]:
+        elif ("ferme" or "fermé") in commands[i]:
             c_code += "}\n" + (" " * tab * 4)
+            tab -= 1
         else:
             c_code += f'{commands[i]}'
             if i < len(commands) - 1 and commands[i + 1] != "retour":
@@ -189,7 +195,7 @@ if __name__ == "__main__":
                         all_commands.append(paused_string)
                         c_code = generate_c_code(all_commands)
                         paused_string = ""
-                elif event.key == pygame.K_i:
+                elif event.key == pygame.K_i and not paused:
                     paused = True
                     add_includes()
                 else:

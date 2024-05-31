@@ -1,8 +1,11 @@
 #include <stdio.h>
 #include <unistd.h>
-#include <stdbool.h>
 
 int main()
 {
-return 0;
+    int variable = 0;
+                if (variable == 0 ) {
+                    variable = 1;
+                    }
+                    return 0;
 }
