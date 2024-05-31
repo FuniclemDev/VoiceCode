@@ -39,7 +39,7 @@ git clone https://github.com/FuniclemDev/VoiceCode.git
 
 | Commande Vocale            | Code C Généré       |
 |----------------------------|---------------------|
-| parenthèse ouvert          | (                   |
+| parenthèse ouverte         | (                   |
 | parenthèse fermée          | )                   |
 | entier                     | int                 |
 | décimal                    | float               |
@@ -52,11 +52,13 @@ git clone https://github.com/FuniclemDev/VoiceCode.git
 | supérieur OU supérieur égal| > OU >=             |
 | inférieur OU inférieur égal| < OU <=             |
 | différent                  | !=                  |
-| retour OU retour fermé     | ;\n OU ;\n          |
+| retour OU retour fermé     | ;\n OU ;\n}\n       |
 | condition                  | if (                |
 | boucle                     | while (             |
 | ouvre                      | {\n                 |
 | ferme                      | }\n                 |
+
+Les commandes if et while font un décalage de tabulation. Pour annuler ce décalage, utilisez la commande "retour fermé"
 
 3. Utilisez les touches du clavier pour ajouter des caractères espacés.
 
