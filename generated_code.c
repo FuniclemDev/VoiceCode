@@ -1,6 +1,8 @@
 #include <stdio.h>
+#include <unistd.h>
 
-int main() {
-      int  variable  =  0 ;
-        return 0;
+int main()
+{
+    anti variable = 0;
+    return 0;
 }

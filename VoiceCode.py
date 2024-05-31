@@ -17,7 +17,7 @@ screen.fill(background_color)
 pygame.display.flip()
 line_color = (0, 0, 0)
 last_command_text = ""  # Variable pour stocker la dernière commande reconnue
-all_commands = ["    "]
+all_commands = ["   "]
 paused = False  # Variable pour vérifier si la saisie est en pause
 paused_string = ""  # Chaîne de caractères tapés pendant la pause
 
@@ -95,25 +95,25 @@ def generate_c_code(commands):
             c_code += " "
         elif "égal" in commands[i]:
             if i+1 < len(commands) and commands[i + 1] == "égal":
-                c_code += " == "
+                c_code += "== "
                 i += 1
             else:
-                c_code += " = "
+                c_code += "= "
         elif "supérieur" in commands[i]:
             if i+1 < len(commands) and commands[i + 1] == "égal":
-                c_code += " >= "
+                c_code += ">= "
                 i += 1
             else:
-                c_code += " > "
+                c_code += "> "
         elif "inférieur" in commands[i]:
             if i+1 < len(commands) and commands[i + 1] == "égal":
-                c_code += " <= "
+                c_code += "<= "
                 i += 1
             else:
-                c_code += " < "
+                c_code += "< "
         elif "différent" in commands[i]:
-            c_code += " != "
-        elif ("retour" or "point") in commands[i]:
+            c_code += "!= "
+        elif "retour" in commands[i]:
             c_code += ";\n"
             if tab > 0 and i+1 < len(commands) and "fermé" in commands[i + 1]:
                 c_code += (" " * (tab - 1) * 4)
@@ -131,7 +131,9 @@ def generate_c_code(commands):
         elif "ferme" in commands[i]:
             c_code += "}\n" + (" " * tab * 4)
         else:
-            c_code += f' {commands[i]} '
+            c_code += f'{commands[i]}'
+            if i < len(commands) - 1 and commands[i + 1] != "retour":
+                c_code += " "
         i += 1
     return c_code
 
@@ -161,14 +163,15 @@ if __name__ == "__main__":
                         key_name = ' '
                     if key_name == 'return':
                         key_name = '\n'
-                    print(key_name, len(key_name))
+                    if (key_name == 'escape'):
+                        running = False
                     if (key_name.isprintable() and len(key_name) == 1) or key_name == '\n':
                         if paused:
                             paused_string += key_name
                         else:
                             all_commands.append(key_name)
                             c_code = generate_c_code(all_commands)
-        if not words:
+        if not words or not running:
             continue  # Ignorer les phrases vides
         for i in words:
             if i == "efface" and len(all_commands) > 0:
@@ -180,12 +183,12 @@ if __name__ == "__main__":
             break
 
         c_code = generate_c_code(all_commands)
-    draw_text("#include <stdio.h>\n#include <unistd.h>\n\nint main() {\n" + c_code + "    return 0;\n}\n", last_command_text)
+    draw_text("#include <stdio.h>\n#include <unistd.h>\n\nint main() {\n" + c_code + "return 0;\n}\n", last_command_text)
     print(all_commands)
     with open("generated_code.c", "w") as file:
-        file.write("#include <stdio.h>\n\nint main() {\n")
+        file.write("#include <stdio.h>\n#include <unistd.h>\n\nint main()\n{\n")
         file.write(c_code)
-        file.write("    return 0;\n}\n")
+        file.write("return 0;\n}\n")
     print("Code C généré avec succès")
 
     # Garder la fenêtre Pygame ouverte après avoir terminé l'écoute
