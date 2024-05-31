@@ -35,11 +35,34 @@ git clone https://github.com/FuniclemDev/VoiceCode.git
 ./VoiceCode.py
 ```
 
-2. Parlez dans le microphone pour donner des commandes vocales. VoiceCode les traduira en code C et les affichera à l'écran.
+2. Parlez dans le microphone pour donner des commandes vocales. VoiceCode les traduira en code C et les affichera à l'écran. Allez voir la liste des traductions disponibles :
 
-3. Utilisez les touches du clavier pour ajouter des commandes supplémentaires ou modifier le code généré.
+| Commande Vocale            | Code C Généré       |
+|----------------------------|---------------------|
+| parenthèse ouvert          | (                   |
+| parenthèse fermée          | )                   |
+| entier                     | int                 |
+| décimal                    | float               |
+| booléen                    | bool                |
+| étoile                     | *                   |
+| Guy ouvert                 | "                   |
+| Guy fermé                  | "                   |
+| espace                     | (espace)            |
+| égal OU égal égal          | = OU ==             |
+| supérieur OU supérieur égal| > OU >=             |
+| inférieur OU inférieur égal| < OU <=             |
+| différent                  | !=                  |
+| retour OU retour fermé     | ;\n OU ;\n          |
+| condition                  | if (                |
+| boucle                     | while (             |
+| ouvre                      | {\n                 |
+| ferme                      | }\n                 |
 
-4. Pour arrêter le programme, prononcez "stop".
+3. Utilisez les touches du clavier pour ajouter des caractères espacés.
+
+4. Appuyez sur la touche Tab, puis utilisez les touches du clavier pour écrire du texte manuellement. Appuyez de nouveau sur Tab pour ajouter et mettre à jour.
+
+5. Pour arrêter le programme, prononcez "stop".
 
 ## Remarques
 
