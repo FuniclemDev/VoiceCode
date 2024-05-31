@@ -20,20 +20,20 @@ Avant d'exécuter VoiceCode, assurez-vous d'avoir les éléments suivants instal
 ## Installation
 
 1. Clonez ce dépôt sur votre machine :
-
+```
 git clone https://github.com/FuniclemDev/VoiceCode.git
-
+```
 2. Installez les dépendances requises en exécutant la commande suivante :
-
+```
 ./install_requirements.sh
-
+```
 
 ## Utilisation
 
 1. Lancez le programme en exécutant le fichier `VoiceCode.py` :
-
+```
 ./VoiceCode.py
-
+```
 
 2. Parlez dans le microphone pour donner des commandes vocales. VoiceCode les traduira en code C et les affichera à l'écran.
 
@@ -43,4 +43,4 @@ git clone https://github.com/FuniclemDev/VoiceCode.git
 
 ## Remarques
 
-Il est possible que le programme ne détecte aucune entrée audio de votre microphone. C'est pour cela que vous avez à votre disposition ./debug.sh, cela peut résoudre le problème mais certaine fonctionnalités de votre pc peuvent disparaître jusqu'au prochain redémarrage. Je décline toute responsabilité en cas de dommage sur un pc exécutant les programmes présents dans le projet. 
+Il est possible que le programme ne détecte aucune entrée audio de votre microphone. C'est pour cela que vous avez à votre disposition ./debug.sh, cela peut résoudre le problème mais certaine fonctionnalités de votre pc peuvent disparaître jusqu'au prochain redémarrage. Je décline toute responsabilité en cas de dommage sur un pc exécutant les programmes présents dans le projet.
