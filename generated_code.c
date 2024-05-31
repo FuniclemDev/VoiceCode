@@ -1,6 +1,5 @@
 #include <stdio.h>
 
 int main() {
-float coucou;
-    return 0;
+    int variableint variable  =  0     return 0;
 }
