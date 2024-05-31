@@ -20,7 +20,7 @@ last_command_text = ""  # Variable pour stocker la dernière commande reconnue
 all_commands = ["   "]
 paused = False  # Variable pour vérifier si la saisie est en pause
 paused_string = ""  # Chaîne de caractères tapés pendant la pause
-includes = []
+includes = ["#include <stdio.h>\n#include <unistd.h>\n"]
 
 def draw_text(text: str, command_text):
     global includes
@@ -173,7 +173,7 @@ if __name__ == "__main__":
     c_code = ""
     running = True
     while True and running:
-        draw_text("#include <stdio.h>\n#include <unistd.h>\n\nint main() {\n" + c_code + "    return 0;\n}\n", last_command_text)
+        draw_text("\nint main() {\n" + c_code + "    return 0;\n}\n", last_command_text)
         if not paused:
             words, last_command_text = listen()
         for event in pygame.event.get():
@@ -218,12 +218,12 @@ if __name__ == "__main__":
             break
 
         c_code = generate_c_code(all_commands)
-    draw_text("#include <stdio.h>\n#include <unistd.h>\n\nint main() {\n" + c_code + "return 0;\n}\n", last_command_text)
+    draw_text("\nint main() {\n" + c_code + "return 0;\n}\n", last_command_text)
     print(all_commands)
     with open("generated_code.c", "w") as file:
         for str in includes:
             file.write(str)
-        file.write("#include <stdio.h>\n#include <unistd.h>\n\nint main()\n{\n")
+        file.write("\nint main()\n{\n")
         file.write(c_code)
         file.write("return 0;\n}\n")
     print("Code C généré avec succès")

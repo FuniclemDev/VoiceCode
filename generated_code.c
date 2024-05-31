@@ -1,9 +1,8 @@
-#include <stdbool.h>
-#include <.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <stdbool.h>
 
 int main()
 {
-   return 0;
+return 0;
 }
