@@ -1,15 +1,7 @@
 #!/usr/bin/env python3
 
 import speech_recognition as sr
-import pyttsx3
 from libc_fct import libc_functions
-
-# Initialisation du moteur de synthèse vocale
-engine = pyttsx3.init()
-
-def speak(text):
-    engine.say(text)
-    engine.runAndWait()
 
 def listen():
     recognizer = sr.Recognizer()
@@ -40,14 +32,13 @@ def generate_c_code(commands):
     return c_code
 
 if __name__ == "__main__":
-    speak("OK")
     all_commands = []
     while True:
         words = listen()
         if not words:
             continue  # Ignorer les phrases vides
         all_commands.extend(words)  # Ajouter les mots à la liste complète des commandes
-        if "stop" in words:
+        if "stop" or "stoppe" in words:
             break
     print(all_commands)
     c_code = generate_c_code(all_commands)
@@ -58,4 +49,3 @@ if __name__ == "__main__":
         file.write(c_code)
         file.write("    return 0;\n}\n")
     print("Code C généré avec succès")
-    speak("OK")
